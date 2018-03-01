@@ -8,6 +8,9 @@ public class FripperController : MonoBehaviour {
 	private float defaultAngle = 20;
 	private float flickAngle = -20;
 
+	private int leftFingerId = 0;
+	private int rightFingerId = 0;
+
 
 	// Use this for initialization
 	void Start () {
@@ -33,44 +36,35 @@ public class FripperController : MonoBehaviour {
 			
 		foreach (Touch t in Input.touches) {
 			var id = t.fingerId;
-			if (Screen.width/2> Input.GetTouch (id).position.x && tag == "LeftFripperTag") {
+			 
 				switch (t.phase) {
-				case TouchPhase.Began:
+			case TouchPhase.Began:
+				if (Screen.width / 2 > Input.GetTouch (id).position.x && tag == "LeftFripperTag") {
 					SetAngle (this.flickAngle);
-					Debug.LogFormat ("{0}:いまタッチした", id);
+					leftFingerId = id;
+				}
+				if (Screen.width / 2 < Input.GetTouch (id).position.x && tag == "RightFripperTag") {
+					SetAngle (this.flickAngle);
+					rightFingerId = id;
+				}
 					break;
-
 				case TouchPhase.Moved:
 				case TouchPhase.Stationary:
 					Debug.LogFormat ("{0}:タッチしている", id);
 					break;
 
-				case TouchPhase.Ended:
-				case TouchPhase.Canceled:
+			case TouchPhase.Ended:
+			case TouchPhase.Canceled:
+				if (id == leftFingerId && tag == "LeftFripperTag") {
 					SetAngle (this.defaultAngle);
-					Debug.LogFormat ("{0}:いま離された", id);
+				}
+				if (id == rightFingerId && tag == "RightFripperTag") {
+					SetAngle (this.defaultAngle);
+				}
 					break;
 				}
-			}else if (Screen.width/2 < Input.GetTouch (id).position.x && tag == "RightFripperTag") {
-				switch (t.phase) {
-				case TouchPhase.Began:
-					SetAngle (this.flickAngle);
-					Debug.LogFormat ("{0}:いまタッチした", id);
-					break;
-
-				case TouchPhase.Moved:
-				case TouchPhase.Stationary:
-					Debug.LogFormat ("{0}:タッチしている", id);
-					break;
-
-				case TouchPhase.Ended:
-				case TouchPhase.Canceled:
-					SetAngle (this.defaultAngle);
-					Debug.LogFormat ("{0}:いま離された", id);
-					break;
-				}
+				
 			}
-		}
 
 	}
 	public void SetAngle(float angle){
